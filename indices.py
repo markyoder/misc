@@ -51,7 +51,27 @@ def rtree_test1(lons=[-124., -114.], lats=[30., 41.5], mc=3.0):
 	#
 	return NN_1s, NN_2s
 
+#class T_square(object):
+#	# a tsunami square object.
+#	def __init__(self, x=0., y=0., z=0.):
+#		self.x=x
+#		self.y=y
+#		self.z=z
+		#
+	#
 
+class T_square_lattice(object):
+	# container and scripts for tsunami square stuff.
+	#
+	def __init__(self, x0=0., y0=1., z0=0., x_max=100., y_max=100., dx=1., dy=1., Z=None):
+		if Z==None:
+			numpy.array(Z=[[z0 for j in xrange(round((x_max-x0)/dx))] for k in xrange(round((y_max-y_0)/dy))])
+		#
+	def nudge(self, j,k):
+		pass
+
+#def my_t_squares():
+	
 
 ####################################
 if __name__=='__main__':
