@@ -59,6 +59,32 @@ def rtree_test1(lons=[-124., -114.], lats=[30., 41.5], mc=3.0):
 #		self.z=z
 		#
 	#
+def rtree_test2(lons=[-124., -114.], lats=[30., 41.5], mc=3.0):
+	#
+	# get an earthquake catalog from ANSS:
+	# def catfromANSS(lon=[135., 150.], lat=[30., 41.5], minMag=4.0, dates0=[dtm.datetime(2005,01,01, tzinfo=tzutc), None], Nmax=None, fout=None, rec_array=True):
+	anss_cat = atp.catfromANSS(lon=lons, lat=lats, minMag=mc, dates0=[dtm.datetime(2000,01,01, tzinfo=atp.tzutc), None], Nmax=None, fout=None, rec_array=True)
+	#
+	#return anss_cat
+	# now, set up an index. do we need a bunch of indices, or is that the whole point of this?
+	#
+	idx = index.Index()
+	# our bounding box:
+	left,bottom,right,top = lons[0], lats[0], lons[1], lats[1]
+	bounds = (left, bottom, right, top)
+	#
+	# now, insert all item indices from anss_cat into idx. nominally, we could insert the row as an object, or an index as an object... or we can synch the id with the
+	# row index, and use the id as the index. note we insert elements as points, with left=right, top=bottom.
+	[idx.insert(j, (rw['lon'], rw['lat'], rw['lon'], rw['lat'])) for j,rw in enumerate(anss_cat)]
+	# 
+	# now, we can use idx to get the index (row number) of elements inside some bounding rectangle like (i think):
+	# note: height, width, etc. have to be defined. this is basically pseudo-code at this point.
+	event_neighbor_indices = list(idx.intersection((ev_x-zone_width, ev_y-zone_height, ev_x + zone_width, ev_y+zone_height)))
+	event_neighbors = [anss_cat[j] for j in event_neighbor_indices]
+	
+	#
+	return idx
+
 
 class T_square_lattice(object):
 	# container and scripts for tsunami square stuff.
