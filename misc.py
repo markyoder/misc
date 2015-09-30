@@ -347,6 +347,9 @@ class Ellipse(object):
 		d_theta = 2.0*math.pi/n_points
 		poly = [[self.a*math.cos(theta), self.b*math.sin(theta)] for theta in numpy.arange(0., 2.0*math.pi+d_theta, d_theta)]
 		# there's probably a smarter way to do this...
+		if self.theta!=0.:
+			poly = numpy.dot([[math.cos(self.theta), -math.sin(self.theta)],[math.sin(self.theta), math.cos(self.theta)]], poly)
+		return ploy
 
 if __name__=='__main__':
 	# do background stuff...
