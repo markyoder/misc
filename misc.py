@@ -18,6 +18,7 @@ import math
 import random
 import numpy
 import scipy
+import scipy.special
 #import scipy.optimize as spo
 #import os
 #from PIL import Image as ipp
@@ -309,6 +310,43 @@ def xy2_lon_lat(x=0., y=0., x_0=0., y_0=0.):
 		lon = (x-x_0)/(deg2km*math.cos(lat*deg2rad))
 	#
 	return [lon, lat]
+
+class Ellipse(object):
+	def __init__(self, a=1.0, b=.5, ab_ratio=None, theta=0.):
+		if a==None and b==None: a,b = 1.0, .5
+		if not (a==None and b==None): ab_ratio=a/float(b)
+		#
+		if a==None: a=b*ab_ratio
+		if b==None: b=a/ab_ratio
+		#
+		self.a = a
+		self.b = b
+		#
+		if theta>1.1*math.pi*2.0: theta*=deg2rad
+		self.theta=theta
+		#
+		self.ab_ratio = ab_ratio
+		self.h = ((a-b)/(a+b))**2
+	#
+	@property
+	def area(self):
+		return math.pi*self.a*self.b
+
+	@property
+	def circumference_exact(self):
+		
+		return math.pi*(self.a+self.b)*scipy.special.hyp2f1(-.5, -.5, 1.0, self.h)
+	
+	@property
+	def circumference_approx1(self):
+		# there are two good approximations from Ramanujan (see wikipedia); this is one of them...
+		#
+		return math.pi*(self.a+self.b)*(1. + 3.*self.h/(10 + math.sqrt(4. - 3.*self.h)))
+	#
+	def poly(self, n_points=100):
+		d_theta = 2.0*math.pi/n_points
+		poly = [[self.a*math.cos(theta), self.b*math.sin(theta)] for theta in numpy.arange(0., 2.0*math.pi+d_theta, d_theta)]
+		# there's probably a smarter way to do this...
 
 if __name__=='__main__':
 	# do background stuff...
