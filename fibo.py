@@ -2,6 +2,8 @@ import math
 import pylab as plt
 import numpy
 import scipy.optimize as spo
+import matplotlib as mpl
+import os
 
 def fibo(n_start=1, n_stop=10):
 	fibos=[0,1]
@@ -83,6 +85,66 @@ class Fibos(list):
 		#
 		plt.plot(X,Y, 'b.-')
 		plt.plot(X, Y_fits, 'g--')
+
+def fibo_box_sequence(N=10, x_padding=.1, y_padding=.1, clr_0='b', fill_alpha=.6, output_dir='/home/myoder/Dropbox/Research/ACES/China2015/talks/nepal/images'):
+	# make some fibo-boxes:
+	#
+	# first, solid:
+	f=fibo_boxes(N=N, x_padding=0., y_padding=0., clr_0=clr_0, fill_alpha=1.0)
+	plt.savefig(os.path.join(output_dir, 'fibo_solid.png'))
+	#
+	# now with borders:
+	f=fibo_boxes(N=N, x_padding=0., y_padding=0., clr_0='b', fill_alpha=.6)
+	plt.savefig(os.path.join(output_dir, 'fibo_borders.png'))
+	#
+	#... and splitting...
+	f=fibo_boxes(N=N, x_padding=x_padding, y_padding=y_padding, clr_0='b', fill_alpha=.6)
+	plt.savefig(os.path.join(output_dir, 'fibo_split_1.png'))
+	
+	f=fibo_boxes(N=N, x_padding=2.*x_padding, y_padding=2.*y_padding, clr_0='b', fill_alpha=.6)
+	plt.savefig(os.path.join(output_dir, 'fibo_split_2.png'))
+	
+	f=fibo_boxes(N=N, x_padding=x_padding, y_padding=y_padding, clr_0=None, fill_alpha=.6)
+	plt.savefig(os.path.join(output_dir, 'fibo_split_colors.png'))
+
+
+
+	
+
+def fibo_boxes(N=10, x_padding=0., y_padding=0., clr_0=None, fill_alpha=.6):
+	F=Fibos(N_stop=N)
+	plt.figure(0)
+	plt.clf()
+	#
+	colors_ =  mpl.rcParams['axes.color_cycle']
+	dy,dx=range(2)
+	x=0
+	y=0
+	for j,f in enumerate(F[1:]):
+		side_len=f
+		if clr_0==None:
+			clr = colors_[j%len(colors_)]
+		else:
+			clr = clr_0
+		#
+		square = zip(*[[x,y], [x+side_len, y], [x+side_len,y+side_len], [x, y+side_len], [x,y]])
+		print square
+		plt.plot(*square, marker='', ls='-', lw=2.5, color=clr)
+		plt.fill(*square, color=clr, alpha=fill_alpha)
+		#
+		x=x+dx*(side_len + x_padding*side_len) - dy*(F[j] + y_padding*side_len)
+		y=y+dy*(side_len + y_padding*side_len) - dx*(F[j] + x_padding*side_len)
+		
+		#
+		dx = (1+dx)%2
+		dy = (1+dy)%2
+	#
+	ax=plt.gca()
+	ax.set_ylim([-.1*max(square[1]), 1.1*max(square[1])])
+	ax.set_xlim([-.1*max(square[0]), 1.1*max(square[0])])
+	#plt.gca().set_ylim([-1., 150.])
+		
+	
 
 def f_exp(x,A,x0,alpha):
 	return A*numpy.exp(alpha*(x-x0))
