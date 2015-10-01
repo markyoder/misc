@@ -327,6 +327,7 @@ class Ellipse(object):
 		#
 		self.ab_ratio = ab_ratio
 		self.h = ((a-b)/(a+b))**2
+		#self.polygon=None
 	#
 	@property
 	def area(self):
@@ -347,9 +348,36 @@ class Ellipse(object):
 		d_theta = 2.0*math.pi/n_points
 		poly = [[self.a*math.cos(theta), self.b*math.sin(theta)] for theta in numpy.arange(0., 2.0*math.pi+d_theta, d_theta)]
 		# there's probably a smarter way to do this...
+		print "theta: %f" % (self.theta)
 		if self.theta!=0.:
-			poly = numpy.dot([[math.cos(self.theta), -math.sin(self.theta)],[math.sin(self.theta), math.cos(self.theta)]], poly)
-		return ploy
+			#poly = zip(*numpy.dot( [[math.cos(self.theta), -math.sin(self.theta)],[math.sin(self.theta), math.cos(self.theta)]], zip(*poly)))
+			poly = numpy.dot(poly, zip(*[[math.cos(self.theta), math.sin(self.theta)],[-math.sin(self.theta), math.cos(self.theta)]]))
+		#
+		return poly
+	#
+	def plot_poly(self, fignum=0, doclf=True, poly_len=100):
+		plt.figure(fignum)
+		plt.clf()
+		#
+		#if self.poly==None or len(self.poly==0):
+		#	self.poly(poly_len)
+		#
+		plt.plot(*zip(*self.poly()), color='b', marker='.', ls='-', lw='1.5')
+
+def circle_transform(e_vals=[1.,1.], theta=0.):
+	# toy script to play with circles, ellipses, and linear transforms.
+	if theta>6.3: theta*=deg2rad
+	#
+	R = [[e_vals[0]*math.cos(theta), e_vals[0]*math.sin(theta)],[-e_vals[1]*math.sin(theta), e_vals[1]*math.cos(theta)]]
+	#
+	d_theta = 2.0*math.pi/250
+	circle = [[math.cos(x), math.sin(x)] for x in numpy.arange(0., 2.0*math.pi+d_theta, d_theta)]
+	circle_prime = numpy.dot(circle, R)
+	#
+	plt.figure(1)
+	plt.clf()
+	plt.plot(*zip(*circle), marker='.', ls='-', color='b')
+	plt.plot(*zip(*circle_prime), marker='.', ls='-', color='g')
 
 if __name__=='__main__':
 	# do background stuff...
