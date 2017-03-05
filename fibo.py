@@ -1,3 +1,10 @@
+'''
+# Fibonacci sequences are commonly asked about in coding tests. Here are several variations on how to code
+# Fibonacci sequence using class structures, data containers, and all that stuff. We also talk a bit about 
+# sequences that don't start at 0. whether or not this constitutes a true Fibonacci sequence is an academic
+# discussion.
+'''
+
 import math
 import pylab as plt
 import numpy
@@ -5,14 +12,65 @@ import scipy.optimize as spo
 import matplotlib as mpl
 import os
 
-def fibo(n_start=1, n_stop=10):
-	fibos=[0,1]
+def fibo(n_stop=10, n_start=0, fibo0=0.):
+	fibos=[0+fibo0,1+fibo0]
 	#
 	while len(fibos)<(n_stop):
 		fibos += [fibos[-2]+fibos[-1]]
-	return fibos
+	return fibos[n_start:n_stop]
 
+class Fiborator(object):
+	def __init__(self, n_stop=10, n_start=0, fibo0=0):
+		self.n_fibo=1
+		#
+		self.n0 = 0 + fibo0
+		self.n1 = 1 + fibo0
+		#
+		while self.n_fibo<n_stop:
+			self.next_fibo
+		#
+	#
+	@property
+	def this_fibo(self):
+		return self.n1
+	#
+	@property
+	def next_fibo(self):
+		next_val = self.n0 + self.n1
+		self.n0 = self.n1
+		self.n1 = next_val
+		self.n_fibo+=1
+		#
+		return self.n1
+	#
+	def prev(self,n=1):
+		if n==1:
+			return self.prev_fibo
+		else:
+			return [self.prev_fibo for j in range(n)]
+	def next(self,n=1):
+		if n==1:
+			return self.next_fibo
+		else:
+			return [self.next_fibo for j in range(n)]
+		#
+	#
+	def __repr__(self):
+		return str(self.this_fibo)
+		
+	@property
+	def prev_fibo(self):
+		if self.n_fibo<=1: return self.n1
+		#
+		n0 = self.n1-self.n0
+		self.n1 = self.n0
+		self.n0 = n0
+		#
+		self.n_fibo-=1
+		#
+		return self.n1
 
+#
 class Fibos(list):
 	#
 	def __init__(self, n_0=0, n_1=1,N_stop=15):
